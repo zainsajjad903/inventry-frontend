@@ -1,6 +1,6 @@
 const createEmployee = async (Data) => {
   try {
-    const response = await fetch("/api/employees/createEmployee", {
+    const response = await fetch("/api/employees", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export { createEmployee };
 //get all employees
 const getAllEmployees = async () => {
   try {
-    const response = await fetch("/api/employees/getAllEmployees");
+    const response = await fetch("/api/employees");
     const result = await response.json();
     if (!response.ok) {
       console.error(
@@ -49,7 +49,7 @@ export { getAllEmployees };
 //get single employee
 const getSingleEmployee = async (id) => {
   try {
-    const response = await fetch(`/api/employees/getSingleEmployee/${id}`);
+    const response = await fetch(`/api/employees/${id}`);
     const result = await response.json();
     if (!response.ok) {
       console.error(
@@ -69,7 +69,7 @@ export { getSingleEmployee };
 //update employee
 const updateEmployee = async (id, Data) => {
   try {
-    const response = await fetch(`/api/employees/updateEmployee/${id}`, {
+    const response = await fetch(`/api/employees/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
