@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import * as api from "../Api/empoleeyapi.js";
 
-const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
+const AddEmployeeModal = ({
+  show,
+  onClose,
+  onEmployeeAdded,
+  editingEmployee,
+}) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,6 +29,52 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  const isEditMode = !!editingEmployee;
+
+  // Populate form when editing
+  useEffect(() => {
+    if (show && editingEmployee) {
+      setFormData({
+        firstName: editingEmployee.firstName || "",
+        lastName: editingEmployee.lastName || "",
+        email: editingEmployee.email || "",
+        phone: editingEmployee.phone || "",
+        CNIC: editingEmployee.CNIC || "",
+        dateOfBirth: editingEmployee.dateOfBirth
+          ? editingEmployee.dateOfBirth.split("T")[0]
+          : "",
+        gender: editingEmployee.gender || "Male",
+        dateOfJoining: editingEmployee.dateOfJoining
+          ? editingEmployee.dateOfJoining.split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        salary: editingEmployee.salary || "",
+        status: editingEmployee.status || "Active",
+        department: editingEmployee.department?._id || "",
+        designation: editingEmployee.designation?._id || "",
+        shift: editingEmployee.shift?._id || "",
+      });
+    } else if (show && !editingEmployee) {
+      // Reset form for new employee
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        CNIC: "",
+        dateOfBirth: "",
+        gender: "Male",
+        dateOfJoining: new Date().toISOString().split("T")[0],
+        salary: "",
+        status: "Active",
+        department: "",
+        designation: "",
+        shift: "",
+      });
+    }
+    setError(null);
+    setSuccess(null);
+  }, [show, editingEmployee]);
 
   // Fetch dropdown data when modal opens
   useEffect(() => {
@@ -133,37 +184,38 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
         shift: formData.shift || undefined,
       };
 
-      const response = await api.createEmployee(employeeData);
+      let response;
 
-      if (response._id || response.success) {
-        setSuccess("Employee added successfully!");
-        // Reset form
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          CNIC: "",
-          dateOfBirth: "",
-          gender: "Male",
-          dateOfJoining: new Date().toISOString().split("T")[0],
-          salary: "",
-          status: "Active",
-          department: "",
-          designation: "",
-          shift: "",
-        });
+      if (isEditMode) {
+        // Update employee
+        response = await api.updateEmployee(editingEmployee._id, employeeData);
+        if (response.data || response.success) {
+          setSuccess("Employee updated successfully!");
+        } else {
+          setError(response.message || "Failed to update employee");
+        }
+      } else {
+        // Create new employee
+        response = await api.createEmployee(employeeData);
+        if (response._id || response.success) {
+          setSuccess("Employee added successfully!");
+        } else {
+          setError(response.message || "Failed to create employee");
+        }
+      }
 
+      if (response._id || response.data || response.success) {
         // Call callback after 1 second to show success message
         setTimeout(() => {
           onEmployeeAdded();
         }, 1000);
-      } else {
-        setError(response.message || "Failed to create employee");
       }
     } catch (err) {
-      console.error("Error creating employee:", err);
-      setError(err.message || "Error creating employee");
+      console.error("Error:", err);
+      setError(
+        err.message ||
+          (isEditMode ? "Error updating employee" : "Error creating employee"),
+      );
     } finally {
       setLoading(false);
     }
@@ -178,10 +230,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
       tabIndex="-1"
       role="dialog"
     >
-      <div className="modal-dialog modal-lg" role="document">
+      <div
+        className="modal-dialog modal-lg modal-dialog-scrollable"
+        role="document"
+      >
         <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Add New Employee</h5>
+          <div className="modal-header sticky-top bg-light">
+            <h5 className="modal-title">
+              {isEditMode ? "Edit Employee" : "Add New Employee"}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -215,15 +272,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
             )}
 
             <form onSubmit={handleSubmit}>
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="firstName" className="form-label">
-                      First Name *
+                      First Name <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="firstName"
                       name="firstName"
                       value={formData.firstName}
@@ -236,11 +293,11 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="lastName" className="form-label">
-                      Last Name *
+                      Last Name <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="lastName"
                       name="lastName"
                       value={formData.lastName}
@@ -252,15 +309,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">
-                      Email *
+                      Email <span className="text-danger">*</span>
                     </label>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="email"
                       name="email"
                       value={formData.email}
@@ -273,11 +330,11 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="phone" className="form-label">
-                      Phone *
+                      Phone <span className="text-danger">*</span>
                     </label>
                     <input
                       type="tel"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="phone"
                       name="phone"
                       value={formData.phone}
@@ -289,15 +346,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="CNIC" className="form-label">
-                      CNIC *
+                      CNIC <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="CNIC"
                       name="CNIC"
                       value={formData.CNIC}
@@ -313,7 +370,7 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                       Gender
                     </label>
                     <select
-                      className="form-select"
+                      className="form-select form-select-sm"
                       id="gender"
                       name="gender"
                       value={formData.gender}
@@ -327,15 +384,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="dateOfBirth" className="form-label">
-                      Date of Birth *
+                      Date of Birth <span className="text-danger">*</span>
                     </label>
                     <input
                       type="date"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="dateOfBirth"
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
@@ -351,7 +408,7 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                     </label>
                     <input
                       type="date"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="dateOfJoining"
                       name="dateOfJoining"
                       value={formData.dateOfJoining}
@@ -361,15 +418,15 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="salary" className="form-label">
-                      Salary
+                      Salary (Rs.)
                     </label>
                     <input
                       type="number"
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id="salary"
                       name="salary"
                       value={formData.salary}
@@ -385,7 +442,7 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                       Status
                     </label>
                     <select
-                      className="form-select"
+                      className="form-select form-select-sm"
                       id="status"
                       name="status"
                       value={formData.status}
@@ -400,14 +457,14 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="department" className="form-label">
-                      Department *
+                      Department <span className="text-danger">*</span>
                     </label>
                     <select
-                      className="form-select"
+                      className="form-select form-select-sm"
                       id="department"
                       name="department"
                       value={formData.department}
@@ -426,10 +483,10 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="designation" className="form-label">
-                      Designation *
+                      Designation <span className="text-danger">*</span>
                     </label>
                     <select
-                      className="form-select"
+                      className="form-select form-select-sm"
                       id="designation"
                       name="designation"
                       value={formData.designation}
@@ -447,14 +504,14 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row g-3">
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="shift" className="form-label">
                       Shift
                     </label>
                     <select
-                      className="form-select"
+                      className="form-select form-select-sm"
                       id="shift"
                       name="shift"
                       value={formData.shift}
@@ -473,10 +530,10 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
             </form>
           </div>
 
-          <div className="modal-footer">
+          <div className="modal-footer sticky-bottom bg-light">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-sm"
               onClick={onClose}
               disabled={loading}
             >
@@ -484,7 +541,7 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
               onClick={handleSubmit}
               disabled={loading}
             >
@@ -495,8 +552,10 @@ const AddEmployeeModal = ({ show, onClose, onEmployeeAdded }) => {
                     role="status"
                     aria-hidden="true"
                   ></span>
-                  Saving...
+                  {isEditMode ? "Updating..." : "Saving..."}
                 </>
+              ) : isEditMode ? (
+                "Update Employee"
               ) : (
                 "Save Employee"
               )}
