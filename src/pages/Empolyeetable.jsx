@@ -1,25 +1,32 @@
-import { useEffect } from "react";
-import { getAllEmployees } from "../hook/empoleeyhook";
+import { useEffect, useState } from "react";
+import { useGetAllEmployees } from "../hook/empoleeyhook.jsx";
+import AddEmployeeModal from "../components/AddEmployeeModal.jsx";
 
 const Empolyeetable = () => {
-  const { employees, loading, error } = getAllEmployees();
+  const { employees, loading, error, employeesData } = useGetAllEmployees();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // Initialize DataTable after data loads
-    if (employees && employees.length > 0 && window.$) {
-      const table = $("#datatable");
-      if (table.DataTable) {
-        // Destroy existing DataTable if it exists
-        if ($.fn.DataTable.isDataTable("#datatable")) {
-          $("#datatable").DataTable().destroy();
+    if (employees && employees.length > 0) {
+      // Check if jQuery and DataTable are available
+      if (
+        typeof window.$ !== "undefined" &&
+        typeof window.$.fn.DataTable !== "undefined"
+      ) {
+        const table = window.$("#datatable");
+        if (table.length > 0) {
+          // Destroy existing DataTable if it exists
+          if (window.$.fn.DataTable.isDataTable("#datatable")) {
+            table.DataTable().destroy();
+          }
+          // Reinitialize DataTable
+          setTimeout(() => {
+            table.DataTable({
+              responsive: true,
+              pageLength: 10,
+            });
+          }, 100);
         }
-        // Reinitialize DataTable with new data
-        setTimeout(() => {
-          table.DataTable({
-            responsive: true,
-            pageLength: 10,
-          });
-        }, 100);
       }
     }
   }, [employees]);
@@ -33,14 +40,36 @@ const Empolyeetable = () => {
     return `${employee.firstName || ""} ${employee.lastName || ""}`.trim();
   };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleEmployeeAdded = () => {
+    employeesData();
+    setShowModal(false);
+  };
+
   return (
     <>
+      <AddEmployeeModal
+        show={showModal}
+        onClose={handleModalClose}
+        onEmployeeAdded={handleEmployeeAdded}
+      />
+
       <div className="row">
         <div className="col-12">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h4 className="card-title">Employee Directory</h4>
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowModal(true)}
+              >
+                <i className="mdi mdi-plus-circle-outline"></i> Add Employee
+              </button>
             </div>
+
             <div className="card-body">
               {loading && (
                 <div className="alert alert-info">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import * as api from "../Api/empoleeyapi.js";
 
-export const getAllEmployees = () => {
+export const useGetAllEmployees = () => {
   let [employees, updateEmployees] = useState([]);
   let [loading, setLoading] = useState(true);
   let [error, setError] = useState(null);
