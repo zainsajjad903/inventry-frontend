@@ -12,7 +12,6 @@ export const useGetAllEmployees = () => {
       setError(null);
       const response = await api.getAllEmployees();
 
-      // Handle the response structure
       if (response.success && response.data) {
         updateEmployees(response.data);
       } else {
