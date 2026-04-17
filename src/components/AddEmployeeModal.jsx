@@ -205,7 +205,6 @@ const AddEmployeeModal = ({
       }
 
       if (response._id || response.data || response.success) {
-        // Call callback after 1 second to show success message
         setTimeout(() => {
           onEmployeeAdded();
         }, 1000);
