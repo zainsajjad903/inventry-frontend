@@ -17,7 +17,6 @@ const Empolyeetable = () => {
       ) {
         const table = window.$("#datatable");
         if (table.length > 0) {
-          // Destroy existing DataTable if it exists
           if (window.$.fn.DataTable.isDataTable("#datatable")) {
             table.DataTable().destroy();
           }
