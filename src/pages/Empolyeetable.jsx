@@ -10,7 +10,6 @@ const Empolyeetable = () => {
 
   useEffect(() => {
     if (employees && employees.length > 0) {
-      // Check if jQuery and DataTable are available
       if (
         typeof window.$ !== "undefined" &&
         typeof window.$.fn.DataTable !== "undefined"
