@@ -21,7 +21,7 @@ const Empolyeetable = () => {
           if (window.$.fn.DataTable.isDataTable("#datatable")) {
             table.DataTable().destroy();
           }
-          // Reinitialize DataTable
+
           setTimeout(() => {
             table.DataTable({
               responsive: true,
