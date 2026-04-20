@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 export default function Sidebar({ isOpen = true }) {
   return (
     <>
@@ -8,10 +8,40 @@ export default function Sidebar({ isOpen = true }) {
           <div id="sidebar-menu">
             <ul className="left-menu list-unstyled" id="side-menu">
               <li>
-                <a href="index.html" className="">
+                <Link to="/">
                   <i className="fas fa-desktop"></i>
                   <span>Dashboard</span>
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/empolyeetable">
+                  <i className="fas fa-users"></i>
+                  <span>Empolyees</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/desiginations">
+                  <i className="fas fa-user-tie"></i>
+                  <span>Desigination</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/department">
+                  <i className="fas fa-building"></i>
+                  <span>Department</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/user">
+                  <i className="fas fa-user"></i>
+                  <span>User</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/shift">
+                  <i className="fas fa-clock"></i>
+                  <span>Shift</span>
+                </Link>
               </li>
 
               <li className="menu-title">Elements</li>
