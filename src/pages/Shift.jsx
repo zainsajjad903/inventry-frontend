@@ -11,6 +11,7 @@ const Shift = () => {
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentRole, setCurrentRole] = useState("employee");
 
   const [showModal, setShowModal] = useState(false);
   const [editingShift, setEditingShift] = useState(null);
@@ -41,6 +42,20 @@ const Shift = () => {
   }, []);
 
   useEffect(() => {
+    try {
+      const authUserRaw = localStorage.getItem("authUser");
+      if (authUserRaw) {
+        const authUser = JSON.parse(authUserRaw);
+        setCurrentRole(authUser?.role || "employee");
+      }
+    } catch {
+      setCurrentRole("employee");
+    }
+  }, []);
+
+  const canManageMasters = ["admin", "manager"].includes(currentRole);
+
+  useEffect(() => {
     if (
       shifts.length > 0 &&
       typeof window.$ !== "undefined" &&
@@ -64,12 +79,20 @@ const Shift = () => {
   }, [shifts]);
 
   const openAddModal = () => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can add shifts");
+      return;
+    }
     setEditingShift(null);
     setName("");
     setShowModal(true);
   };
 
   const openEditModal = (shift) => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can edit shifts");
+      return;
+    }
     setEditingShift(shift);
     setName(shift?.name || "");
     setShowModal(true);
@@ -83,6 +106,10 @@ const Shift = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can save shifts");
+      return;
+    }
     if (!name.trim()) {
       toast.error("Shift name is required");
       return;
@@ -116,6 +143,10 @@ const Shift = () => {
   };
 
   const handleDelete = async (shift) => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can delete shifts");
+      return;
+    }
     if (!window.confirm(`Delete shift ${shift.name}?`)) {
       return;
     }
@@ -196,12 +227,23 @@ const Shift = () => {
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h4 className="card-title mb-0">Shifts</h4>
-              <button className="btn btn-primary btn-sm" onClick={openAddModal}>
-                <i className="mdi mdi-plus-circle-outline"></i> Add Shift
-              </button>
+              {canManageMasters ? (
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={openAddModal}
+                >
+                  <i className="mdi mdi-plus-circle-outline"></i> Add Shift
+                </button>
+              ) : null}
             </div>
 
             <div className="card-body">
+              {!canManageMasters && (
+                <div className="alert alert-warning">
+                  You can view shifts only. Admin or manager role is required to
+                  add, edit, or delete.
+                </div>
+              )}
               {loading && (
                 <div className="alert alert-info mb-0">Loading shifts...</div>
               )}

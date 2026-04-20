@@ -13,6 +13,7 @@ const Desigination = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentRole, setCurrentRole] = useState("employee");
 
   const [showModal, setShowModal] = useState(false);
   const [editingDesignation, setEditingDesignation] = useState(null);
@@ -55,6 +56,20 @@ const Desigination = () => {
   }, []);
 
   useEffect(() => {
+    try {
+      const authUserRaw = localStorage.getItem("authUser");
+      if (authUserRaw) {
+        const authUser = JSON.parse(authUserRaw);
+        setCurrentRole(authUser?.role || "employee");
+      }
+    } catch {
+      setCurrentRole("employee");
+    }
+  }, []);
+
+  const canManageMasters = ["admin", "manager"].includes(currentRole);
+
+  useEffect(() => {
     if (
       designations.length > 0 &&
       typeof window.$ !== "undefined" &&
@@ -78,6 +93,10 @@ const Desigination = () => {
   }, [designations]);
 
   const openAddModal = () => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can add designations");
+      return;
+    }
     setEditingDesignation(null);
     setTitle("");
     setDepartment("");
@@ -85,6 +104,10 @@ const Desigination = () => {
   };
 
   const openEditModal = (designation) => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can edit designations");
+      return;
+    }
     setEditingDesignation(designation);
     setTitle(designation?.title || "");
     setDepartment(
@@ -102,6 +125,11 @@ const Desigination = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can save designations");
+      return;
+    }
 
     if (!title.trim()) {
       toast.error("Designation title is required");
@@ -146,6 +174,10 @@ const Desigination = () => {
   };
 
   const handleDelete = async (designation) => {
+    if (!canManageMasters) {
+      toast.error("Only admin or manager can delete designations");
+      return;
+    }
     if (!window.confirm(`Delete designation ${designation.title}?`)) {
       return;
     }
@@ -246,12 +278,24 @@ const Desigination = () => {
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h4 className="card-title mb-0">Designations</h4>
-              <button className="btn btn-primary btn-sm" onClick={openAddModal}>
-                <i className="mdi mdi-plus-circle-outline"></i> Add Designation
-              </button>
+              {canManageMasters ? (
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={openAddModal}
+                >
+                  <i className="mdi mdi-plus-circle-outline"></i> Add
+                  Designation
+                </button>
+              ) : null}
             </div>
 
             <div className="card-body">
+              {!canManageMasters && (
+                <div className="alert alert-warning">
+                  You can view designations only. Admin or manager role is
+                  required to add, edit, or delete.
+                </div>
+              )}
               {loading && (
                 <div className="alert alert-info mb-0">
                   Loading designations...
