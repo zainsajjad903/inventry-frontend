@@ -1,14 +1,21 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";
 import Empolyeetable from "./pages/Empolyeetable";
 import Home from "./pages/Home";
-import Navbar from "./components/Navbar";
 import Topbar from "./components/Topbar";
+import Sidebar from "./components/Sidebar";
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const handleToggleSidebar = () => {
+    setSidebarOpen((current) => !current);
+  };
+
   return (
     <Router>
       <ToastContainer
@@ -23,14 +30,19 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      <Topbar />
-      <Navbar />
+      <Topbar onToggleSidebar={handleToggleSidebar} />
 
-      <div style={{ marginTop: "25px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/empolyeetable" element={<Empolyeetable />} />
-        </Routes>
+      <div
+        className={`app-shell ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}
+      >
+        <Sidebar isOpen={sidebarOpen} />
+
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/empolyeetable" element={<Empolyeetable />} />
+          </Routes>
+        </main>
       </div>
     </Router>
   );

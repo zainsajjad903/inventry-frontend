@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = true }) {
   return (
     <>
-      <div className="sidebar-left">
+      <aside className={`sidebar-left ${isOpen ? "is-open" : "is-collapsed"}`}>
         <div data-simplebar className="h-100">
           <div id="sidebar-menu">
             <ul className="left-menu list-unstyled" id="side-menu">
@@ -785,7 +785,7 @@ export default function Sidebar() {
             </ul>
           </div>
         </div>
-      </div>
+      </aside>
     </>
   );
 }

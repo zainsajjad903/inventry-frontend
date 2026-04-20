@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Topbar() {
+export default function Topbar({ onToggleSidebar }) {
   return (
     <>
       <header id="page-topbar">
@@ -44,6 +44,7 @@ export default function Topbar() {
               type="button"
               className="btn btn-sm top-icon sidebar-btn"
               id="sidebar-btn"
+              onClick={onToggleSidebar}
             >
               <i className="mdi mdi-menu-open align-middle fs-19"></i>
             </button>
@@ -471,8 +472,7 @@ export default function Topbar() {
                 <button
                   type="button"
                   className="btn btn-sm top-icon"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#offcanvas-rightsidabar"
+                  onClick={onToggleSidebar}
                 >
                   <i className="fas fa-table align-middle"></i>
                 </button>
