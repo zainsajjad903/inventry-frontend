@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
-  fetchList,
-  createItem,
-  updateItem,
-  deleteItem,
-} from "../Api/masterapi.js";
+  createUser,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+} from "../Api/Userapi.js";
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -27,7 +27,10 @@ const User = () => {
     try {
       setLoading(true);
       setError("");
-      const result = await fetchList("/api/users");
+      const result = await getAllUsers();
+      if (result?.success === false) {
+        throw new Error(result?.message || "Error fetching users");
+      }
       setUsers(result?.data || []);
     } catch (err) {
       setError(err.message || "Error fetching users");
@@ -124,10 +127,16 @@ const User = () => {
       }
 
       if (editingUser?._id) {
-        await updateItem("/api/users", editingUser._id, payload);
+        const updateResult = await updateUser(editingUser._id, payload);
+        if (updateResult?.success === false) {
+          throw new Error(updateResult?.message || "Failed to update user");
+        }
         toast.success("User updated successfully");
       } else {
-        await createItem("/api/users", payload);
+        const createResult = await createUser(payload);
+        if (createResult?.success === false) {
+          throw new Error(createResult?.message || "Failed to create user");
+        }
         toast.success("User created successfully");
       }
 
@@ -147,7 +156,10 @@ const User = () => {
 
     try {
       setDeletingId(user._id);
-      await deleteItem("/api/users", user._id);
+      const deleteResult = await deleteUser(user._id);
+      if (deleteResult?.success === false) {
+        throw new Error(deleteResult?.message || "Failed to delete user");
+      }
       toast.success("User deleted successfully");
       fetchUsers();
     } catch (err) {
