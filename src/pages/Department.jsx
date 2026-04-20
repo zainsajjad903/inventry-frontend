@@ -6,6 +6,7 @@ import {
   updateDepartment,
   deleteDepartment,
 } from "../Api/Departmentapi.js";
+import { getAllUsers } from "../Api/Userapi.js";
 
 const Department = () => {
   const [departments, setDepartments] = useState([]);
@@ -15,6 +16,7 @@ const Department = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingDepartment, setEditingDepartment] = useState(null);
   const [name, setName] = useState("");
+  const [activeUserId, setActiveUserId] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -38,6 +40,39 @@ const Department = () => {
 
   useEffect(() => {
     fetchDepartments();
+  }, []);
+
+  useEffect(() => {
+    const resolveActiveUser = async () => {
+      try {
+        const directId =
+          localStorage.getItem("userId") ||
+          localStorage.getItem("currentUserId") ||
+          "";
+
+        if (directId) {
+          setActiveUserId(directId);
+          return;
+        }
+
+        const authUserRaw = localStorage.getItem("authUser");
+        if (authUserRaw) {
+          const authUser = JSON.parse(authUserRaw);
+          if (authUser?._id) {
+            setActiveUserId(authUser._id);
+            return;
+          }
+        }
+
+        const usersResult = await getAllUsers();
+        const firstUserId = usersResult?.data?.[0]?._id || "";
+        setActiveUserId(firstUserId);
+      } catch {
+        setActiveUserId("");
+      }
+    };
+
+    resolveActiveUser();
   }, []);
 
   useEffect(() => {
@@ -93,6 +128,7 @@ const Department = () => {
       if (editingDepartment?._id) {
         const updateResult = await updateDepartment(editingDepartment._id, {
           name: name.trim(),
+          userId: activeUserId,
         });
         if (updateResult?.success === false) {
           throw new Error(
@@ -101,7 +137,10 @@ const Department = () => {
         }
         toast.success("Department updated successfully");
       } else {
-        const createResult = await createDepartment({ name: name.trim() });
+        const createResult = await createDepartment({
+          name: name.trim(),
+          userId: activeUserId,
+        });
         if (createResult?.success === false) {
           throw new Error(
             createResult?.message || "Failed to create department",
