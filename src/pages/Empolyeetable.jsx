@@ -7,6 +7,7 @@ const Empolyeetable = () => {
   const { employees, loading, error, employeesData } = useGetAllEmployees();
   const [showModal, setShowModal] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [viewingEmployee, setViewingEmployee] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
   useEffect(() => {
@@ -58,6 +59,14 @@ const Empolyeetable = () => {
     setShowModal(true);
   };
 
+  const handleView = (employee) => {
+    setViewingEmployee(employee);
+  };
+
+  const closeView = () => {
+    setViewingEmployee(null);
+  };
+
   const handleDelete = async (employeeId, employeeName) => {
     if (window.confirm(`Are you sure you want to delete ${employeeName}?`)) {
       try {
@@ -89,6 +98,75 @@ const Empolyeetable = () => {
         onEmployeeAdded={handleEmployeeAdded}
         editingEmployee={editingEmployee}
       />
+
+      {viewingEmployee && (
+        <div
+          className="modal show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Employee Details</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeView}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <strong>Full Name:</strong>
+                    <div>{getFullName(viewingEmployee)}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Email:</strong>
+                    <div>{viewingEmployee.email || "-"}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>CNIC:</strong>
+                    <div>{viewingEmployee.CNIC || "-"}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Gender:</strong>
+                    <div>{viewingEmployee.gender || "-"}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Date of Birth:</strong>
+                    <div>{formatDate(viewingEmployee.dateOfBirth)}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Date of Joining:</strong>
+                    <div>{formatDate(viewingEmployee.dateOfJoining)}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Salary:</strong>
+                    <div>
+                      {viewingEmployee.salary
+                        ? `Rs. ${viewingEmployee.salary.toLocaleString()}`
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <strong>Shift:</strong>
+                    <div>{viewingEmployee.shift?.name || "-"}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-light"
+                  onClick={closeView}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="row">
         <div className="col-12">
@@ -131,25 +209,17 @@ const Empolyeetable = () => {
                   <table
                     id="datatable"
                     className="table table-hover table-bordered table-striped dt-responsive"
-                    style={{
-                      width: "100%",
-                    }}
+                    style={{ width: "100%" }}
                   >
                     <thead className="bg-light">
                       <tr>
                         <th style={{ minWidth: "120px" }}>Name</th>
-                        <th style={{ minWidth: "150px" }}>Email</th>
-                        <th style={{ minWidth: "100px" }}>Phone</th>
-                        <th style={{ minWidth: "100px" }}>CNIC</th>
-                        <th style={{ minWidth: "80px" }}>Gender</th>
-                        <th style={{ minWidth: "100px" }}>DOB</th>
-                        <th style={{ minWidth: "100px" }}>Start Date</th>
-                        <th style={{ minWidth: "90px" }}>Salary</th>
-                        <th style={{ minWidth: "90px" }}>Department</th>
-                        <th style={{ minWidth: "90px" }}>Designation</th>
-                        <th style={{ minWidth: "80px" }}>Shift</th>
-                        <th style={{ minWidth: "70px" }}>Status</th>
-                        <th style={{ minWidth: "100px" }}>Actions</th>
+                        <th style={{ minWidth: "180px" }}>Email</th>
+                        <th style={{ minWidth: "110px" }}>Phone</th>
+                        <th style={{ minWidth: "110px" }}>Department</th>
+                        <th style={{ minWidth: "110px" }}>Designation</th>
+                        <th style={{ minWidth: "80px" }}>Status</th>
+                        <th style={{ minWidth: "140px" }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -162,25 +232,6 @@ const Empolyeetable = () => {
                             <small>{employee.email || "-"}</small>
                           </td>
                           <td>{employee.phone || "-"}</td>
-                          <td>{employee.CNIC || "-"}</td>
-                          <td>
-                            <span className="badge bg-secondary">
-                              {employee.gender || "-"}
-                            </span>
-                          </td>
-                          <td>
-                            <small>{formatDate(employee.dateOfBirth)}</small>
-                          </td>
-                          <td>
-                            <small>{formatDate(employee.dateOfJoining)}</small>
-                          </td>
-                          <td>
-                            <strong>
-                              {employee.salary
-                                ? `Rs. ${employee.salary.toLocaleString()}`
-                                : "-"}
-                            </strong>
-                          </td>
                           <td>
                             {employee.department?._id ? (
                               <span className="badge bg-info">
@@ -194,15 +245,6 @@ const Empolyeetable = () => {
                             {employee.designation?._id ? (
                               <span className="badge bg-primary">
                                 {employee.designation?.title || "Position"}
-                              </span>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                          <td>
-                            {employee.shift?._id ? (
-                              <span className="badge bg-warning text-dark">
-                                {employee.shift?.name || "Shift"}
                               </span>
                             ) : (
                               "-"
@@ -225,6 +267,13 @@ const Empolyeetable = () => {
                           </td>
                           <td>
                             <div className="d-flex gap-2 flex-wrap">
+                              <button
+                                className="btn btn-sm btn-info"
+                                onClick={() => handleView(employee)}
+                                title="View Employee"
+                              >
+                                <i className="mdi mdi-eye"></i>
+                              </button>
                               <button
                                 className="btn btn-sm btn-warning"
                                 onClick={() => handleEdit(employee)}

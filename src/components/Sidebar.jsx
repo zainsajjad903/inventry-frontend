@@ -20,7 +20,7 @@ export default function Sidebar({ isOpen = true }) {
                 </Link>
               </li>
               <li>
-                <Link to="/desiginations">
+                <Link to="/desigination">
                   <i className="fas fa-user-tie"></i>
                   <span>Desigination</span>
                 </Link>
