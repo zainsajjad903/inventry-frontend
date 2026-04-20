@@ -83,13 +83,14 @@ const Empolyeetable = () => {
 
   return (
     <>
+      <Topbar />
       <AddEmployeeModal
         show={showModal}
         onClose={handleModalClose}
         onEmployeeAdded={handleEmployeeAdded}
         editingEmployee={editingEmployee}
       />
-      <Topbar />
+
       <div className="row">
         <div className="col-12">
           <div className="card">
