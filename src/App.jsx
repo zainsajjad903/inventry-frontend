@@ -8,7 +8,10 @@ import Empolyeetable from "./pages/Empolyeetable";
 import Home from "./pages/Home";
 import Topbar from "./components/Topbar";
 import Sidebar from "./components/Sidebar";
-
+import Desigination from "./pages/Desigination";
+import Department from "./pages/Department";
+import User from "./pages/User";
+import Shift from "./pages/Shift";
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -41,6 +44,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/empolyeetable" element={<Empolyeetable />} />
+            <Route path="/department" element={<Department />} />
+            <Route path="/user" element={<User />} />
+            <Route path="/shift" element={<Shift />} />
+            <Route path="/desigination" element={<Desigination />} />
           </Routes>
         </main>
       </div>
