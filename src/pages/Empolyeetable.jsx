@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetAllEmployees } from "../hook/empoleeyhook.jsx";
 import AddEmployeeModal from "../components/AddEmployeeModal.jsx";
-
+import { toast } from "react-toastify";
 const Empolyeetable = () => {
   const { employees, loading, error, employeesData } = useGetAllEmployees();
   const [showModal, setShowModal] = useState(false);
@@ -66,14 +66,14 @@ const Empolyeetable = () => {
         });
 
         if (response.ok) {
-          alert("Employee deleted successfully!");
+          toast.success("Employee deleted successfully!");
           employeesData();
         } else {
-          alert("Failed to delete employee");
+          toast.error("Failed to delete employee");
         }
       } catch (error) {
         console.error("Error deleting employee:", error);
-        alert("Error deleting employee");
+        toast.error("Error deleting employee");
       } finally {
         setDeleting(null);
       }

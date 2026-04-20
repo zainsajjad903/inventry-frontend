@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import * as api from "../Api/empoleeyapi.js";
 
 const AddEmployeeModal = ({
@@ -27,8 +28,6 @@ const AddEmployeeModal = ({
   const [designations, setDesignations] = useState([]);
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
 
   const isEditMode = !!editingEmployee;
 
@@ -72,8 +71,6 @@ const AddEmployeeModal = ({
         shift: "",
       });
     }
-    setError(null);
-    setSuccess(null);
   }, [show, editingEmployee]);
 
   // Fetch dropdown data when modal opens
@@ -90,6 +87,8 @@ const AddEmployeeModal = ({
       const deptData = await deptResponse.json();
       if (deptData.success && deptData.data) {
         setDepartments(deptData.data);
+      } else {
+        toast.error("Failed to fetch departments");
       }
 
       // Fetch designations
@@ -97,6 +96,8 @@ const AddEmployeeModal = ({
       const desigData = await desigResponse.json();
       if (desigData.success && desigData.data) {
         setDesignations(desigData.data);
+      } else {
+        toast.error("Failed to fetch designations");
       }
 
       // Fetch shifts
@@ -107,6 +108,7 @@ const AddEmployeeModal = ({
       }
     } catch (err) {
       console.error("Error fetching dropdown data:", err);
+      toast.error("Error fetching form data");
     }
   };
 
@@ -116,41 +118,39 @@ const AddEmployeeModal = ({
       ...prev,
       [name]: value,
     }));
-    // Clear error on input change
-    if (error) setError(null);
   };
 
   const validateForm = () => {
     if (!formData.firstName.trim()) {
-      setError("First name is required");
+      toast.error("First name is required");
       return false;
     }
     if (!formData.lastName.trim()) {
-      setError("Last name is required");
+      toast.error("Last name is required");
       return false;
     }
     if (!formData.email.trim()) {
-      setError("Email is required");
+      toast.error("Email is required");
       return false;
     }
     if (!formData.phone.trim()) {
-      setError("Phone is required");
+      toast.error("Phone is required");
       return false;
     }
     if (!formData.CNIC.trim()) {
-      setError("CNIC is required");
+      toast.error("CNIC is required");
       return false;
     }
     if (!formData.dateOfBirth) {
-      setError("Date of birth is required");
+      toast.error("Date of birth is required");
       return false;
     }
     if (!formData.department) {
-      setError("Department is required");
+      toast.error("Department is required");
       return false;
     }
     if (!formData.designation) {
-      setError("Designation is required");
+      toast.error("Designation is required");
       return false;
     }
     return true;
@@ -165,8 +165,6 @@ const AddEmployeeModal = ({
 
     try {
       setLoading(true);
-      setError(null);
-      setSuccess(null);
 
       const employeeData = {
         firstName: formData.firstName.trim(),
@@ -190,17 +188,19 @@ const AddEmployeeModal = ({
         // Update employee
         response = await api.updateEmployee(editingEmployee._id, employeeData);
         if (response.data || response.success) {
-          setSuccess("Employee updated successfully!");
+          toast.success("Employee updated successfully!");
         } else {
-          setError(response.message || "Failed to update employee");
+          toast.error(response.message || "Failed to update employee");
+          return;
         }
       } else {
         // Create new employee
         response = await api.createEmployee(employeeData);
         if (response._id || response.success) {
-          setSuccess("Employee added successfully!");
+          toast.success("Employee added successfully!");
         } else {
-          setError(response.message || "Failed to create employee");
+          toast.error(response.message || "Failed to create employee");
+          return;
         }
       }
 
@@ -211,7 +211,7 @@ const AddEmployeeModal = ({
       }
     } catch (err) {
       console.error("Error:", err);
-      setError(
+      toast.error(
         err.message ||
           (isEditMode ? "Error updating employee" : "Error creating employee"),
       );
@@ -247,29 +247,6 @@ const AddEmployeeModal = ({
           </div>
 
           <div className="modal-body">
-            {error && (
-              <div
-                className="alert alert-danger alert-dismissible fade show"
-                role="alert"
-              >
-                <strong>Error:</strong> {error}
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setError(null)}
-                ></button>
-              </div>
-            )}
-
-            {success && (
-              <div
-                className="alert alert-success alert-dismissible fade show"
-                role="alert"
-              >
-                <strong>Success:</strong> {success}
-              </div>
-            )}
-
             <form onSubmit={handleSubmit}>
               <div className="row g-3">
                 <div className="col-md-6">

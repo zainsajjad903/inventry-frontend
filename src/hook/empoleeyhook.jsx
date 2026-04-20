@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import * as api from "../Api/empoleeyapi.js";
 
 export const useGetAllEmployees = () => {
@@ -16,11 +17,15 @@ export const useGetAllEmployees = () => {
         updateEmployees(response.data);
       } else {
         updateEmployees([]);
-        setError(response.message || "Failed to fetch employees");
+        const errorMsg = response.message || "Failed to fetch employees";
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (err) {
       console.error("Error fetching employees:", err);
-      setError(err.message || "Error fetching employees");
+      const errorMsg = err.message || "Error fetching employees";
+      setError(errorMsg);
+      toast.error(errorMsg);
       updateEmployees([]);
     } finally {
       setLoading(false);
