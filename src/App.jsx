@@ -6,6 +6,8 @@ import "./App.css";
 import Empolyeetable from "./pages/Empolyeetable";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
+import Topbar from "./components/Topbar";
+
 function App() {
   return (
     <Router>
@@ -21,12 +23,15 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      <Topbar />
       <Navbar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/empolyeetable" element={<Empolyeetable />} />
-      </Routes>
+      <div style={{ marginTop: "25px" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/empolyeetable" element={<Empolyeetable />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

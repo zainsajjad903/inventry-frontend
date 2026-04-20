@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetAllEmployees } from "../hook/empoleeyhook.jsx";
 import AddEmployeeModal from "../components/AddEmployeeModal.jsx";
 import { toast } from "react-toastify";
-import Topbar from "../components/Topbar.jsx";
+
 const Empolyeetable = () => {
   const { employees, loading, error, employeesData } = useGetAllEmployees();
   const [showModal, setShowModal] = useState(false);
@@ -83,7 +83,6 @@ const Empolyeetable = () => {
 
   return (
     <>
-      <Topbar />
       <AddEmployeeModal
         show={showModal}
         onClose={handleModalClose}
