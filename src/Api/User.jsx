@@ -83,7 +83,7 @@ const updateUser = async (id, Data) => {
   }
 };
 export { updateUser };
-//delete user
+//delete user api
 const deleteUser = async (id) => {
   try {
     const response = await fetch(`/api/users/${id}`, {

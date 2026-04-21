@@ -7,13 +7,10 @@ import {
   deleteDepartment,
 } from "../Api/Departmentapi.js";
 import { getAllUsers } from "../Api/Userapi.js";
-
 const Department = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentRole, setCurrentRole] = useState("employee");
-
   const [showModal, setShowModal] = useState(false);
   const [editingDepartment, setEditingDepartment] = useState(null);
   const [name, setName] = useState("");
@@ -42,20 +39,6 @@ const Department = () => {
   useEffect(() => {
     fetchDepartments();
   }, []);
-
-  useEffect(() => {
-    try {
-      const authUserRaw = localStorage.getItem("authUser");
-      if (authUserRaw) {
-        const authUser = JSON.parse(authUserRaw);
-        setCurrentRole(authUser?.role || "employee");
-      }
-    } catch {
-      setCurrentRole("employee");
-    }
-  }, []);
-
-  const canManageMasters = ["admin", "manager"].includes(currentRole);
 
   useEffect(() => {
     const resolveActiveUser = async () => {
@@ -114,20 +97,12 @@ const Department = () => {
   }, [departments]);
 
   const openAddModal = () => {
-    if (!canManageMasters) {
-      toast.error("Only admin or manager can add departments");
-      return;
-    }
     setEditingDepartment(null);
     setName("");
     setShowModal(true);
   };
 
   const openEditModal = (department) => {
-    if (!canManageMasters) {
-      toast.error("Only admin or manager can edit departments");
-      return;
-    }
     setEditingDepartment(department);
     setName(department?.name || "");
     setShowModal(true);
@@ -141,10 +116,6 @@ const Department = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!canManageMasters) {
-      toast.error("Only admin or manager can save departments");
-      return;
-    }
     if (!name.trim()) {
       toast.error("Department name is required");
       return;
@@ -186,10 +157,6 @@ const Department = () => {
   };
 
   const handleDelete = async (department) => {
-    if (!canManageMasters) {
-      toast.error("Only admin or manager can delete departments");
-      return;
-    }
     if (!window.confirm(`Delete department ${department.name}?`)) {
       return;
     }
@@ -268,22 +235,11 @@ const Department = () => {
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h4 className="card-title mb-0">Departments</h4>
-              {canManageMasters ? (
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={openAddModal}
-                >
-                  <i className="mdi mdi-plus-circle-outline"></i> Add Department
-                </button>
-              ) : null}
+              <button className="btn btn-primary btn-sm" onClick={openAddModal}>
+                <i className="mdi mdi-plus-circle-outline"></i> Add Department
+              </button>
             </div>
             <div className="card-body">
-              {!canManageMasters && (
-                <div className="alert alert-warning">
-                  You can view departments only. Admin or manager role is
-                  required to add, edit, or delete.
-                </div>
-              )}
               {loading && (
                 <div className="alert alert-info mb-0">
                   Loading departments...

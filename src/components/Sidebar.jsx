@@ -8,9 +8,9 @@ export default function Sidebar({ isOpen = true }) {
           <div id="sidebar-menu">
             <ul className="left-menu list-unstyled" id="side-menu">
               <li>
-                <Link to="/">
-                  <i className="fas fa-desktop"></i>
-                  <span>Dashboard</span>
+                <Link to="/empolyeetable">
+                  <i className="fas fa-gear "></i>
+                  <span>Management</span>
                 </Link>
               </li>
               <li>
@@ -44,7 +44,7 @@ export default function Sidebar({ isOpen = true }) {
                 </Link>
               </li>
 
-              <li className="menu-title">Elements</li>
+              {/* <li className="menu-title">Elements</li>
 
               <li>
                 <a href="javascript: void(0);" className="has-arrow ">
@@ -811,7 +811,7 @@ export default function Sidebar({ isOpen = true }) {
                   <i className="fas fa-id-badge"></i>
                   <span>Contacts</span>
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
