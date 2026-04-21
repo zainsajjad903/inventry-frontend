@@ -23,7 +23,7 @@ const createShift = async (Data) => {
   }
 };
 export { createShift };
-//get all shifts
+//get all shifts api
 const getAllShifts = async () => {
   try {
     const response = await fetch("/api/shifts");
