@@ -1,3 +1,4 @@
+//create user api
 const createUser = async (Data) => {
   try {
     const response = await fetch("/api/users", {
