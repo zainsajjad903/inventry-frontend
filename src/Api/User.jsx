@@ -57,7 +57,7 @@ const getSingleUser = async (id) => {
   }
 };
 export { getSingleUser };
-//update user
+//update user api
 const updateUser = async (id, Data) => {
   try {
     const response = await fetch(`/api/users/${id}`, {
