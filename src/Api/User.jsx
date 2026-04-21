@@ -23,7 +23,7 @@ const createUser = async (Data) => {
   }
 };
 export { createUser };
-//get all users
+//get all users api
 const getAllUsers = async () => {
   try {
     const response = await fetch("/api/users");
