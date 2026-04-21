@@ -40,7 +40,7 @@ const getAllUsers = async () => {
   }
 };
 export { getAllUsers };
-//get single user
+//get single user by id
 const getSingleUser = async (id) => {
   try {
     const response = await fetch(`/api/users/${id}`);
