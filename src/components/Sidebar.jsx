@@ -792,12 +792,7 @@ export default function Sidebar({ isOpen = true }) {
 
               <li className="menu-title">Apps</li>
 
-              <li>
-                <a href="apps-chat.html" className="">
-                  <i className="fas fa-comment"></i>
-                  <span>Chat</span>
-                </a>
-              </li>
+              
 
 
            
