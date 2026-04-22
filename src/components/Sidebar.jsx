@@ -755,23 +755,7 @@ export default function Sidebar({ isOpen = true }) {
                     <a href="pages-404.html">
                       <i className="mdi mdi-checkbox-blank-circle align-middle"></i>{" "}
                       Error 404
-                    </a>
-                  </li>
-                  <li>
-                    <a href="pages-500.html">
-                      <i className="mdi mdi-checkbox-blank-circle align-middle"></i>{" "}
-                      Error 500
-                    </a>
-                  </li>
-                </ul>
-              </li>
-
-              <li>
-                <a href="pages-starter.html">
-                  <i className="fas fa-pager"></i> <span>Starter Page</span>
-                </a>
-              </li>
-
+               
             
 
 
