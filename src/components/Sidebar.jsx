@@ -772,17 +772,7 @@ export default function Sidebar({ isOpen = true }) {
                 </a>
               </li>
 
-              <li>
-                <a href="pages-pricing.html">
-                  <i className="fas fa-dollar-sign"></i> <span>Pricing</span>
-                </a>
-              </li>
-
-              <li>
-                <a href="pages-faqs.html">
-                  <i className="fas fa-question"></i> <span>FAQs</span>
-                </a>
-              </li>
+            
 
 
               
