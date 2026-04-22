@@ -800,11 +800,7 @@ export default function Sidebar({ isOpen = true }) {
               </li>
 
 
-              <li>
-                <a href="apps-contact.html" className="">
-                  <i className="fas fa-id-badge"></i>
-                  <span>Contacts</span>
-                </a>
+           
               </li> */}
             </ul>
           </div>
