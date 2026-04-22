@@ -745,16 +745,7 @@ export default function Sidebar({ isOpen = true }) {
                 </ul>
               </li>
 
-              <li>
-                <a href="javascript: void(0);" className="has-arrow ">
-                  <i className="fa fa-unlink"></i>
-                  <span>Error</span>
-                </a>
-                <ul className="sub-menu" aria-expanded="false">
-                  <li>
-                    <a href="pages-404.html">
-                      <i className="mdi mdi-checkbox-blank-circle align-middle"></i>{" "}
-                      Error 404
+          
                
             
 
