@@ -784,13 +784,6 @@ export default function Sidebar({ isOpen = true }) {
                 </a>
               </li>
 
-              <li>
-                <a href="pages-comingsoon.html">
-                  <i className="fas fa-tape"></i> <span>Coming Soon</span>
-                </a>
-              </li>
-
-              <li className="menu-title">Apps</li>
 
               
 
