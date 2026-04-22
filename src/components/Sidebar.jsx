@@ -729,21 +729,7 @@ export default function Sidebar({ isOpen = true }) {
                   <i className="fa fa-unlock-alt"></i>
                   <span>Authentication</span>
                 </a>
-                <ul className="sub-menu" aria-expanded="false">
-                  <li>
-                    <a href="auth-login.html">
-                      <i className="mdi mdi-checkbox-blank-circle align-middle"></i>{" "}
-                      Login
-                    </a>
-                  </li>
-                  <li>
-                    <a href="auth-register.html">
-                      <i className="mdi mdi-checkbox-blank-circle align-middle"></i>{" "}
-                      Register
-                    </a>
-                  </li>
-                </ul>
-              </li>
+               
 
           
                
