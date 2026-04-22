@@ -799,12 +799,6 @@ export default function Sidebar({ isOpen = true }) {
                 </a>
               </li>
 
-              <li>
-                <a href="apps-kanban.html" className="">
-                  <i className="fas fa-grip-horizontal"></i>
-                  <span>Kanban Board</span>
-                </a>
-              </li>
 
               <li>
                 <a href="apps-contact.html" className="">
